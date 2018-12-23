@@ -17,16 +17,27 @@ fun main(args: Array<String>) {
 }
 
 fun Application.mainModule() {
+
+    // Dependency context
     val mongoDriver = MongoDriver().setup()
+    val userRepository = UserRepository(mongoDriver)
+    val userService = UserService(userRepository)
+    val userRoutes = UserRoutes(userService)
+    val roundRepository = RoundRepository(mongoDriver)
+    val roundService = RoundService(roundRepository, userService)
+    val roundRoutes = RoundRoutes(roundService)
     val questionService = QuestionService(QuestionRepository(mongoDriver))
-    val questionRoutes = QuestionRoutes(questionService)
+    val questionRoutes = QuestionRoutes(questionService, roundService)
+
     install(ContentNegotiation) {
         gson {
             setPrettyPrinting()
         }
     }
     routing {
-      questionRoutes.getRoutes(this)
+        questionRoutes.getRoutes(this)
+        roundRoutes.getRoutes(this)
+        userRoutes.getRoutes(this)
     }
 
 }

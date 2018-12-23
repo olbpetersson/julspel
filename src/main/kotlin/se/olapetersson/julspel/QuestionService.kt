@@ -2,23 +2,17 @@ package se.olapetersson.julspel
 
 class QuestionService(private val questionRepository: QuestionRepository) {
 
-    fun getNextQuestion(): Question {
-        return questionRepository.getQuestionById(1)
+    fun getOngoingQuestion(roundIndex: Int): Question {
+        return questionRepository.getQuestionById(roundIndex)
     }
 
-    fun getQuestion(id: Int): Question {
-        return questionRepository.getQuestionById(id)
-    }
-
-    fun getQuestions() {
+    fun getQuestions(): List<Question> {
         return questionRepository.getAll()
     }
 
-    fun correctQuestion(answer: Answer) {
+    fun validateAnswer(answer: Answer): Boolean {
         val question = questionRepository.getQuestionById(answer.questionId)
-        if(question.correct == answer.answer) {
-            // TODO: Update highscore
-        }
+        return question.correct == answer.answer
     }
 
 }

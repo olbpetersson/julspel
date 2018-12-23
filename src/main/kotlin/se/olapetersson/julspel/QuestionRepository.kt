@@ -1,7 +1,5 @@
 package se.olapetersson.julspel
 
-import com.mongodb.client.FindIterable
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -24,8 +22,6 @@ class QuestionRepository(private val database: MongoDatabase) {
     )
 
     init {
-        println("initiating database")
-
         if (collection.countDocuments() <= 0) {
             println("inserting")
             collection.insertMany(questions)
@@ -36,8 +32,8 @@ class QuestionRepository(private val database: MongoDatabase) {
         return collection.findOne(Question::id eq id)!!
     }
 
-    fun getAll(): FindIterable<Question> {
-        return collection.find().
+    fun getAll(): List<Question> {
+        return collection.find().toList()
     }
 
 }
