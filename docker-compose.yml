@@ -4,14 +4,14 @@ services:
     image: gotoola/julspelet
     restart: always
     ports:
-      - "8080:8080"
+      - "80:8080"
     links:
       - mongodb
     depends_on:
       - mongodb
     environment:
       - DOCKER=true
-      - ROUND_TIME_MS=60_000
+      - ROUND_TIME_MS=300000
       - OPEN_SIGNAL_API_KEY=
   mongodb:
     image: mongo

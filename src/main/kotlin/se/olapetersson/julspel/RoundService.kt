@@ -34,16 +34,18 @@ class RoundService(private val roundRepository: RoundRepository,
     }
 
     fun startRounds() {
-        fixedRateTimer(name = "The game engine", period = roundTime) {
-            runBlocking {
-                try {
+        try {
+            fixedRateTimer(name = "The game engine", period = roundTime) {
+                runBlocking {
+
                     logger.info("ding ding ding!")
                     nextRound()
                     oneSignalClient.sendNotification()
-                } catch (e: Exception) {
-                    logger.error("Schedule crashed, probably out of questions", e)
+
                 }
             }
+        } catch (e: Exception) {
+            logger.error("Schedule crashed, probably out of questions", e)
         }
     }
 

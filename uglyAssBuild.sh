@@ -2,6 +2,7 @@
 DOCKER_TAG=$(date +'%Y%-m%d%M%S') &&
 cd ../julspel-frontend &&
 npm run build &&
+rm -r ../julspel/src/main/resources/webapp &&
 cp -r build/ ../julspel/src/main/resources/webapp &&
 cd ../julspel/ &&
 ./gradlew clean build &&
