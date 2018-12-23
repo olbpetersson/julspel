@@ -7,6 +7,8 @@ import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.default
+import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.response.respond
@@ -58,10 +60,7 @@ fun Application.mainModule() {
         userRoutes.getRoutes(this)
         static("/") {
             resources("webapp")
-        }
-        get("/apa") {
-            oneSignalClient.sendNotification()
-            call.respond(HttpStatusCode.Accepted)
+            defaultResource("webapp/index.html")
         }
     }
 
