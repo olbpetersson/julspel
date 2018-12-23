@@ -11,9 +11,22 @@ class RoundService(private val roundRepository: RoundRepository,
 
     fun givePointsToUser(userId: String) {
         val currentRound = getCurrentRound()
-        userService.givePointsToUser(currentRound!!.pointsLeft, userId)
-        if (currentRound.pointsLeft > 0) {
-            roundRepository.updateRound(currentRound.copy(pointsLeft = currentRound.pointsLeft - 2))
+        val hasntAnsweredBefore = currentRound!!.respondees.none { respondee ->
+            respondee == userId
+        }
+        if (hasntAnsweredBefore) {
+            userService.givePointsToUser(currentRound.pointsLeft, userId)
+            logger.info("Giving ${currentRound.pointsLeft} to $userId")
+            if (currentRound.pointsLeft > 0) {
+                roundRepository.updateRound(
+                    currentRound.copy(
+                        pointsLeft = currentRound.pointsLeft - 2,
+                        respondees = currentRound.respondees + userId
+                    )
+                )
+            }
+        } else {
+            logger.info("$userId tried to cheat buhu!")
         }
     }
 
@@ -34,15 +47,19 @@ class RoundService(private val roundRepository: RoundRepository,
 
     fun nextRound() {
         val currentRound = getCurrentRound()
-        var nextRound = Round(GAME_ID, 0, MAX_POINTS)
-        if(currentRound != null) {
+        var nextRound = Round(GAME_ID, 0, MAX_POINTS, emptyList())
+        if (currentRound != null) {
             nextRound = currentRound.copy(currentRoundIndex = currentRound.currentRoundIndex + 1)
             roundRepository.updateRound(nextRound)
         } else {
             roundRepository.create(nextRound)
         }
-        logger.info("Bumping next round ${nextRound.currentRoundIndex}")
+        logger.info("Bumping next round $nextRound")
 
+    }
+
+    fun whipe() {
+        roundRepository.removeGame()
     }
 
 }

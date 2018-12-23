@@ -1,6 +1,11 @@
 package se.olapetersson.julspel
 
+import org.slf4j.LoggerFactory
+
 class UserService(private val userRepository: UserRepository) {
+
+    private val logger = LoggerFactory.getLogger(UserService::javaClass.name)
+
     val availableNames = listOf(
         "ADVENT",
         "LUCIA",
@@ -18,7 +23,9 @@ class UserService(private val userRepository: UserRepository) {
 
     fun givePointsToUser(points: Int, userId: String) {
         val userBefore = userRepository.findUser(userId)!!
-        userRepository.updateUser(userBefore.copy(score = userBefore.score + points))
+        val userToBeUpdated = userBefore.copy(score = userBefore.score + points)
+        logger.info("Updating user with $userToBeUpdated")
+        userRepository.updateUser(userToBeUpdated)
     }
 
     fun createUser(): User {
@@ -28,8 +35,13 @@ class UserService(private val userRepository: UserRepository) {
             val foundUser = userRepository.findUser(name)
         } while (foundUser != null)
         val userToCreate = User(name, 0)
+        logger.info("Creating new user $userToCreate")
         userRepository.insertUser(userToCreate)
         return userToCreate
+    }
+
+    fun getUsers(): List<User> {
+        return userRepository.findAll()
     }
 
 

@@ -15,6 +15,9 @@ class RoundRoutes(private val roundService: RoundService) {
                 call.respond(HttpStatusCode.Accepted, "Started the rounds")
 
             }
+            get("round/whipe") {
+                roundService.whipe()
+            }
         }
     }
 }

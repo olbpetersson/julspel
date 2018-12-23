@@ -21,8 +21,12 @@ class RoundRepository(private val database: MongoDatabase) {
         collection.updateOne(Round::gameId eq GAME_ID, round)
     }
 
-    fun getCurrent(): Round {
-        return collection.findOne(Round::gameId eq GAME_ID)!!
+    fun getCurrent(): Round? {
+        return collection.findOne(Round::gameId eq GAME_ID)
+    }
+
+    fun removeGame() {
+        collection.deleteOne(Round::gameId eq GAME_ID)
     }
 
 }

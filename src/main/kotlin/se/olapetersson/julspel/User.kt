@@ -1,4 +1,4 @@
 package se.olapetersson.julspel
 
 // ugly coupling yey
-data class User(val alias: String, val score: Int)
+data class User(val _id: String, val score: Int)
