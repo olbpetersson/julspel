@@ -6,7 +6,8 @@ import kotlin.concurrent.fixedRateTimer
 
 class RoundService(private val roundRepository: RoundRepository,
                    private val userService: UserService,
-                   private val oneSignalClient: OneSignalClient) {
+                   private val oneSignalClient: OneSignalClient,
+                   private val roundTime: Long) {
 
     val logger = LoggerFactory.getLogger(RoundService::javaClass.name)
 
@@ -33,7 +34,7 @@ class RoundService(private val roundRepository: RoundRepository,
     }
 
     fun startRounds() {
-        fixedRateTimer(name = "The game engine", period = 3_600_000) {
+        fixedRateTimer(name = "The game engine", period = roundTime) {
             runBlocking {
                 try {
                     logger.info("ding ding ding!")

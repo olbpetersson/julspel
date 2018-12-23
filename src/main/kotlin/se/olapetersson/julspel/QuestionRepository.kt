@@ -8,7 +8,7 @@ import org.litote.kmongo.getCollection
 class QuestionRepository(private val database: MongoDatabase) {
     val collection = database.getCollection<Question>()
 
-    var questions = Questions.julRundan()
+    var questions = Questions.testRundan()
 
     init {
         if (collection.countDocuments() <= 0) {

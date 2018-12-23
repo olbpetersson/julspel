@@ -27,14 +27,18 @@ fun Application.mainModule() {
 
     // Dependency context
     val oneSignalApiKey = System.getenv("OPEN_SIGNAL_API_KEY")
+    val isDocker = System.getenv("DOCKER")?.trim()?.toBoolean() ?: false
+    val roundTime = System.getenv("ROUND_TIME_MS")?.trim()?.toLong() ?: 3_600_000
+    println("STARTING DOCKER WITH $isDocker")
+    val mongoUrl = if (isDocker) "mongodb:27017" else "localhost:27017"
     require(oneSignalApiKey != null ) { "YOU NEED TO SET ENV OPEN_SIGNAL_API_KEY" }
     val oneSignalClient = OneSignalClient(oneSignalApiKey)
-    val mongoDriver = MongoDriver().setup()
+    val mongoDriver = MongoDriver().setup(mongoUrl)
     val userRepository = UserRepository(mongoDriver)
     val userService = UserService(userRepository)
     val userRoutes = UserRoutes(userService)
     val roundRepository = RoundRepository(mongoDriver)
-    val roundService = RoundService(roundRepository, userService)
+    val roundService = RoundService(roundRepository, userService, oneSignalClient, roundTime)
     val roundRoutes = RoundRoutes(roundService)
     val questionService = QuestionService(QuestionRepository(mongoDriver))
     val questionRoutes = QuestionRoutes(questionService, roundService)
