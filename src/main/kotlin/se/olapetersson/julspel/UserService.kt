@@ -22,6 +22,7 @@ class UserService(private val userRepository: UserRepository) {
         "JULTOMTE")
 
     fun givePointsToUser(points: Int, userId: String) {
+        logger.info("Getting user with id $userId")
         val userBefore = userRepository.findUser(userId)!!
         val userToBeUpdated = userBefore.copy(score = userBefore.score + points)
         logger.info("Updating user with $userToBeUpdated")

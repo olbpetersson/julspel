@@ -1,10 +1,12 @@
 package se.olapetersson.julspel
 
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.fixedRateTimer
 
 class RoundService(private val roundRepository: RoundRepository,
-                   private val userService: UserService) {
+                   private val userService: UserService,
+                   private val oneSignalClient: OneSignalClient) {
 
     val logger = LoggerFactory.getLogger(RoundService::javaClass.name)
 
@@ -31,12 +33,15 @@ class RoundService(private val roundRepository: RoundRepository,
     }
 
     fun startRounds() {
-        fixedRateTimer(name = "The game engine", period = 60_000) {
-            try {
-                logger.info("ding ding ding!")
-                nextRound()
-            } catch (e: Exception) {
-                logger.error("Schedule crashed, probably out of questions", e)
+        fixedRateTimer(name = "The game engine", period = 3_600_000) {
+            runBlocking {
+                try {
+                    logger.info("ding ding ding!")
+                    nextRound()
+                    oneSignalClient.sendNotification()
+                } catch (e: Exception) {
+                    logger.error("Schedule crashed, probably out of questions", e)
+                }
             }
         }
     }
@@ -60,6 +65,11 @@ class RoundService(private val roundRepository: RoundRepository,
 
     fun whipe() {
         roundRepository.removeGame()
+    }
+
+    fun markUserForCurrentRound(userId: String) {
+        val currentRound = getCurrentRound()
+        roundRepository.updateRound(currentRound!!.copy(respondees = currentRound.respondees + userId))
     }
 
 }

@@ -15,7 +15,7 @@ class QuestionRoutes(private val questionService: QuestionService, private val r
 
     fun getRoutes(routing: Routing) {
         routing {
-            get("/") {
+            get("/questions") {
                 call.respond(questionService.getQuestions().map(QuestionMapper::toDto))
 
             }
@@ -30,8 +30,11 @@ class QuestionRoutes(private val questionService: QuestionService, private val r
             post("question/validate") {
                 val answer = call.receive<Answer>()
                 val validatedAnswer = questionService.validateAnswer(answer)
+                val userId = answer.userId
                 if (validatedAnswer) {
-                    roundService.givePointsToUser(answer.userId)
+                    roundService.givePointsToUser(userId)
+                } else {
+                    roundService.markUserForCurrentRound(userId)
                 }
                 call.respond(HttpStatusCode.Accepted, "Got it!")
             }

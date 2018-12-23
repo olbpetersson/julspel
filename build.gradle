@@ -7,6 +7,7 @@ buildscript {
 
     repositories {
         mavenCentral()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -36,8 +37,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "io.ktor:ktor-server-netty:$ktor_version"
     compile "io.ktor:ktor-gson:$ktor_version"
+    compile "io.ktor:ktor-client-apache:$ktor_version"
+    compile "io.ktor:ktor-client-auth-basic:$ktor_version"
     compile 'org.litote.kmongo:kmongo:3.9.0'
-    compile("ch.qos.logback:logback-classic:1.2.3")
+    compile "ch.qos.logback:logback-classic:1.2.3"
 
     //compile 'org.litote.kmongo:kmongo-async:3.9.0'
     //compile 'org.litote.kmongo:kmongo-coroutine:3.9.0'
